@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import {inject, observer} from "mobx-react";
+import React, { Component } from 'react';
+import { inject, observer } from "mobx-react";
 import redirectTo from "../src/utils/redirectTo";
-import $ from "jquery";
+import { Button, Form } from 'react-bootstrap';
 
 @inject('authStore')
 @inject('userStore')
@@ -17,6 +17,7 @@ export default class Home extends Component {
             token: null,
             inputUserName: '',
             inputPassword: '',
+            errors: {}
         }
     }
 
@@ -38,48 +39,24 @@ export default class Home extends Component {
     // }
 
 
-    changeInputUserName = (event) => {
-        if ($("#username").val() == '') {
-            $("#username").removeClass("is-invalid")
-            $("#form_username").children(".invalid-feedback").remove()
-            $("#form_username").append("<div class=\"invalid-feedback\">Пожалуйста заполните поле с логином.</div>");
-            $("#username").addClass("is-invalid")
-        } else {
-            let regexp = /^[a-z\s]+$/i;
-            $("#username").removeClass("is-invalid")
-            // $("#form_password").$(".invalid-feedback").remove()
-            $("#form_username").children(".invalid-feedback").remove()
-            if (!regexp.test($("#username").val())) {
-                $("#form_username").append("<div class=\"invalid-feedback\">Логин может состоять только из букв английского алфавита.</div>");
-                $("#username").addClass("is-invalid")
-            } else {
-                $("#username").removeClass("is-invalid")
-                $("#form_username").children(".invalid-feedback").remove()
-                $("#username").addClass("is-valid")
-                this.setState({
-                    inputUserName: event.target.value
-                })
-            }
-        }
-    }
 
     changeInputPassword = (event) => {
-        if ($("#password").val() == '') {
-            $("#form_password").append("<div class=\"invalid-feedback\">Пожалуйста заполните поле с паролем.</div>");
-            $("#password").addClass("is-invalid")
-        } else {
-            $("#password").removeClass("is-invalid")
-            // $("#form_password").$(".invalid-feedback").remove()
-            $("#form_password").children(".invalid-feedback").remove()
-            $("#password").addClass("is-valid")
-            this.setState({
-                inputPassword: event.target.value
-            })
-        }
+        // if ($("#password").val() == '') {
+        //     $("#form_password").append("<div class=\"invalid-feedback\">Пожалуйста заполните поле с паролем.</div>");
+        //     $("#password").addClass("is-invalid")
+        // } else {
+        //     $("#password").removeClass("is-invalid")
+        //     // $("#form_password").$(".invalid-feedback").remove()
+        //     $("#form_password").children(".invalid-feedback").remove()
+        //     $("#password").addClass("is-valid")
+        //     this.setState({
+        //         inputPassword: event.target.value
+        //     })
+        // }
     }
 
     clickButtonLogin = () => {
-        if ((this.state.inputUserName != '') && (this.state.inputPassword != '')) {
+        if ((this.state.inputUserName !== '') && (this.state.inputPassword !== '')) {
             this.props.authStore.login(this.state.inputUserName, this.state.inputPassword).then(
                 response => {
                     redirectTo('/')
@@ -89,6 +66,28 @@ export default class Home extends Component {
         } else {
 
         }
+    }
+
+    loginChange = (event) => {
+        let regexp = /^[a-z\s]+$/i;
+        if (event.target.value.length !== 0) {
+            if (!regexp.test(event.target.value)) {
+                this.setState({
+                    errors: { ...this.state.errors, ['userName']: 'Логин может состоять только из букв английского алфавита.' },
+                })
+            } else {
+                this.setState({
+                    errors: null,
+                    inputUserName: event.target.value
+                })
+            }
+        } else {
+            this.setState({
+                errors: { ...this.state.errors, ['userName']: 'Пожалуйста заполните поле с логином.' },
+                inputUserName: event.target.value
+            })
+        }
+
     }
 
 
@@ -105,21 +104,28 @@ export default class Home extends Component {
     render() {
         return (
             <div className="modal-body my_border border shadow">
-                <form>
-                    <div className="form-row" id="form_username">
-                        <label htmlFor="username">Логин</label>
-                        <input onChange={this.changeInputUserName} type="username" className="form-control"
-                               id="username" name="username" required/>
-                    </div>
-                    <div className="form-row" id="form_password">
-                        <label htmlFor="password">Пароль</label>
-                        <input onChange={this.changeInputPassword} type="password" className="form-control"
-                               id="password" name="password" required/>
-                    </div>
-                    <div className="form-row align-items-center mt-3 justify-content-center mobile-auth">
-                        <button className="btn btn-dark" type="button" onClick={this.clickButtonLogin}>Войти</button>
-                    </div>
-                </form>
+                <Form>
+                    <Form.Group controlId="formBasicEmail">
+                        <Form.Label>Логин</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Логин"
+                            name={'username'}
+                            onChange={this.loginChange}
+                            value={this.state.inputUserName}
+                            isInvalid={this.state.errors?.userName}
+                            isValid={this.state.inputUserName.length > 0}
+                            onFocus={this.loginChange}
+                            onBlur={this.loginChange}
+                        />
+                        {this.state.errors?.userName && <Form.Control.Feedback type={'invalid'}>{this.state.errors?.userName}</Form.Control.Feedback>}
+                    </Form.Group>
+                    <Form.Group controlId="formBasicPassword">
+                        <Form.Label>Пароль</Form.Label>
+                        <Form.Control type="password" placeholder="Пароль" name={'password'} />
+                    </Form.Group>
+                    <Button variant="primary" onClick={this.clickButtonLogin}>Submit</Button>
+                </Form>
             </div>
         )
     }
