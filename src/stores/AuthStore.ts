@@ -1,6 +1,7 @@
 import {action, observable} from "mobx";
 import {AxiosInstance, AxiosResponse} from "axios";
 import TokenStore from "./TokenStore";
+import UserStore from "./UserStore";
 
 export interface User {
   name: string;
@@ -34,6 +35,18 @@ class AuthStore {
       this.setUser(null)
       resolve(null as User);
     });
+  }
+
+  getUserData() {
+    if (TokenStore.get()) {
+      return this.client.get(
+        '/api/user/'
+      ).then((response) => {
+        return response
+      }).catch((response) => {
+        return response
+      })
+    }
   }
 
   // login(username: string, password: string): Promise<User> {

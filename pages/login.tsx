@@ -60,7 +60,6 @@ export default class Home extends Component {
             this.props.authStore.login(this.state.inputUserName, this.state.inputPassword).then(
                 response => {
                     redirectTo('/')
-                    console.log(response)
                 }
             )
         } else {
@@ -90,6 +89,19 @@ export default class Home extends Component {
 
     }
 
+    passwordChange = (event) => {
+        if (event.target.value.length !== 0) {
+            this.setState({
+                    errors: null,
+                    inputPassword: event.target.value
+                })
+        } else {
+            this.setState({
+                errors: { ...this.state.errors, ['userPassword']: 'Пожалуйста заполните поле с паролем.' },
+                inputPassword: ''
+            })
+        }
+    }
 
     componentDidMount() {
         // this.props.jsonServerStore.getProfile().then(response => {
@@ -103,9 +115,9 @@ export default class Home extends Component {
 
     render() {
         return (
-            <div className="modal-body my_border border shadow">
+            <div className="modal-body border shadow my_border">
                 <Form>
-                    <Form.Group controlId="formBasicEmail">
+                    <Form.Group controlId="formBasicUsername">
                         <Form.Label>Логин</Form.Label>
                         <Form.Control
                             type="text"
@@ -122,9 +134,22 @@ export default class Home extends Component {
                     </Form.Group>
                     <Form.Group controlId="formBasicPassword">
                         <Form.Label>Пароль</Form.Label>
-                        <Form.Control type="password" placeholder="Пароль" name={'password'} />
+                        <Form.Control
+                            type="text"
+                            placeholder="Пароль"
+                            name={'password'}
+                            onChange={this.passwordChange}
+                            value={this.state.inputPassword}
+                            isInvalid={this.state.errors?.userPassword}
+                            isValid={this.state.inputPassword.length > 0}
+                            onFocus={this.passwordChange}
+                            onBlur={this.passwordChange}
+                        />
+                        {this.state.errors?.userPassword && <Form.Control.Feedback type={'invalid'}>{this.state.errors?.userPassword}</Form.Control.Feedback>}
                     </Form.Group>
-                    <Button variant="primary" onClick={this.clickButtonLogin}>Submit</Button>
+                    <div className="form-row align-items-center mt-3 justify-content-center">
+                        <Button variant="primary" className="btn btn-dark" onClick={this.clickButtonLogin}>Войти</Button>
+                    </div>
                 </Form>
             </div>
         )
