@@ -17,6 +17,7 @@ class MyApp extends App {
     rootStore: RootStore;
     props: any;
 
+
     constructor(props) {
         super(props);
         const isServer = typeof window === 'undefined';
