@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {AxiosInstance, AxiosResponse} from "axios";
 import {inject, observer} from "mobx-react";
 import Link from 'next/link'
 
@@ -22,11 +21,12 @@ class Header extends Component {
     }
 
     componentDidMount() {
-        this.props.authStore.fetchCurrentUser()
-        this.setState({
-            user: this.props.authStore.user
-        })
         console.log(this.props.authStore.user)
+        // this.props.authStore.fetchCurrentUser()
+        // this.setState({
+        //     user: this.props.authStore.user
+        // })
+        // console.log(this.props.authStore.user)
         // this.props.authStore.fetchCurrentUser().then((response) => {
         //     this.setState({
         //         user: response
@@ -43,8 +43,6 @@ class Header extends Component {
     }
 
     render() {
-        console.log(this.state.user)
-
         return (
             <div className={'bg-dark header d-print-none'}>
                 <nav className="container navbar navbar-expand-lg navbar-dark bg-dark">
@@ -59,12 +57,12 @@ class Header extends Component {
                             <li className="nav-item active">
                                 <Link href="/"><a className="nav-link">Home</a></Link>
                             </li>
-                            {this.state.user?.username &&
+                            {this.props.authStore.user?.username &&
                             <li className="nav-item active">
                                 <Link href="/user"><a
-                                    className="nav-link">{this.state.user?.username ? this.state.user?.username : 'Profile'}</a></Link>
+                                    className="nav-link">{this.props.authStore.user?.username ? this.props.authStore.user?.username : 'Profile'}</a></Link>
                             </li>}
-                            {!this.state.user?.username &&
+                            {!this.props.authStore.user?.username &&
                             <li className="nav-item active">
                                 <Link href="/login"><a className="nav-link">login</a></Link>
                             </li>}
