@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { inject, observer } from "mobx-react";
+import React, {Component} from 'react';
+import {inject, observer} from "mobx-react";
 import redirectTo from "../src/utils/redirectTo";
-import { Button, Form } from 'react-bootstrap';
+import {Button, Form} from 'react-bootstrap';
 
 @inject('authStore')
 @inject('userStore')
@@ -39,7 +39,6 @@ export default class Home extends Component {
     // }
 
 
-
     changeInputPassword = (event) => {
         // if ($("#password").val() == '') {
         //     $("#form_password").append("<div class=\"invalid-feedback\">Пожалуйста заполните поле с паролем.</div>");
@@ -58,7 +57,7 @@ export default class Home extends Component {
     clickButtonLogin = () => {
         if ((this.state.inputUserName !== '') && (this.state.inputPassword !== '')) {
             this.props.authStore.login(this.state.inputUserName, this.state.inputPassword).then(
-                response => {
+                () => {
                     redirectTo('/')
                 }
             )
@@ -72,7 +71,10 @@ export default class Home extends Component {
         if (event.target.value.length !== 0) {
             if (!regexp.test(event.target.value)) {
                 this.setState({
-                    errors: { ...this.state.errors, ['userName']: 'Логин может состоять только из букв английского алфавита.' },
+                    errors: {
+                        ...this.state.errors,
+                        ['userName']: 'Логин может состоять только из букв английского алфавита.'
+                    },
                 })
             } else {
                 this.setState({
@@ -82,7 +84,7 @@ export default class Home extends Component {
             }
         } else {
             this.setState({
-                errors: { ...this.state.errors, ['userName']: 'Пожалуйста заполните поле с логином.' },
+                errors: {...this.state.errors, ['userName']: 'Пожалуйста заполните поле с логином.'},
                 inputUserName: event.target.value
             })
         }
@@ -92,12 +94,12 @@ export default class Home extends Component {
     passwordChange = (event) => {
         if (event.target.value.length !== 0) {
             this.setState({
-                    errors: null,
-                    inputPassword: event.target.value
-                })
+                errors: null,
+                inputPassword: event.target.value
+            })
         } else {
             this.setState({
-                errors: { ...this.state.errors, ['userPassword']: 'Пожалуйста заполните поле с паролем.' },
+                errors: {...this.state.errors, ['userPassword']: 'Пожалуйста заполните поле с паролем.'},
                 inputPassword: ''
             })
         }
@@ -130,7 +132,8 @@ export default class Home extends Component {
                             onFocus={this.loginChange}
                             onBlur={this.loginChange}
                         />
-                        {this.state.errors?.userName && <Form.Control.Feedback type={'invalid'}>{this.state.errors?.userName}</Form.Control.Feedback>}
+                        {this.state.errors?.userName &&
+                        <Form.Control.Feedback type={'invalid'}>{this.state.errors?.userName}</Form.Control.Feedback>}
                     </Form.Group>
                     <Form.Group controlId="formBasicPassword">
                         <Form.Label>Пароль</Form.Label>
@@ -145,10 +148,12 @@ export default class Home extends Component {
                             onFocus={this.passwordChange}
                             onBlur={this.passwordChange}
                         />
-                        {this.state.errors?.userPassword && <Form.Control.Feedback type={'invalid'}>{this.state.errors?.userPassword}</Form.Control.Feedback>}
+                        {this.state.errors?.userPassword && <Form.Control.Feedback
+                            type={'invalid'}>{this.state.errors?.userPassword}</Form.Control.Feedback>}
                     </Form.Group>
                     <div className="form-row align-items-center mt-3 justify-content-center">
-                        <Button variant="primary" className="btn btn-dark" onClick={this.clickButtonLogin}>Войти</Button>
+                        <Button variant="primary" className="btn btn-dark"
+                                onClick={this.clickButtonLogin}>Войти</Button>
                     </div>
                 </Form>
             </div>
